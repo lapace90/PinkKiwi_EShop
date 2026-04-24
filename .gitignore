@@ -25,6 +25,9 @@
 # Uploads (images produits, etc.)
 /public/uploads/*
 !/public/uploads/.gitkeep
+!/public/uploads/address.png
+!/public/uploads/boxes.png
+!/public/uploads/emptycart.png
 
 # Logs et cache
 *.log
