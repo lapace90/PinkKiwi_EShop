@@ -67,8 +67,8 @@ services:
     image: mailhog/mailhog
     container_name: pinkiwi_mailhog
     ports:
-      - "1025:1025"  # SMTP
-      - "8025:8025"  # Interface web
+      - "1026:1025"  # SMTP
+      - "8026:8025"  # Interface web
     networks:
       - pinkiwi_network
 

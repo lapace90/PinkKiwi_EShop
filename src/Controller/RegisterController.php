@@ -2,29 +2,21 @@
 
 namespace App\Controller;
 
-
-
 use App\Entity\User;
 use App\Form\RegisterType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class RegisterController extends AbstractController
 {
 
-    private $passwordHasher;
-    private $manager;
-
-
-    public function __construct(UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $manager)
-    {
-        $this->passwordHasher = $passwordHasher;
-        $this->manager = $manager;
-    }
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher,
+        private EntityManagerInterface $manager,
+    ) {}
 
 
     #[Route('/inscription', name: 'register')]
@@ -45,24 +37,13 @@ class RegisterController extends AbstractController
             );
             $user->setPassword($hashedPassword);
 
-            $user->setActive(0);
-            // persiste les données dans le temps
+            $user->setActive(true);
             $this->manager->persist($user);
-
-            //ecrit dans la bdd
             $this->manager->flush();
-
-            $token = sha1($user->getEmail() . $user->getPassword());
-
-            // Envoi d'un mail
-            $contentEmail = 'Hello ' . $user->getEmail() . '<br>
-Thank you for your registration, the account has been created and must be activated via the link below<br>
-https://' . $_SERVER['HTTP_HOST'] . '/inscription/' . $user->getId() . '/' . $token;
-            mail($user->getEmail(), 'Account Activation', $contentEmail);
 
             $this->addFlash(
                 'success',
-                'The account ' . $user->getEmail() . ' has been created and must be activated, an email has been sent to you'
+                'The account ' . $user->getEmail() . ' has been created successfully'
             );
 
             return $this->redirectToRoute('app_login');
@@ -75,7 +56,7 @@ https://' . $_SERVER['HTTP_HOST'] . '/inscription/' . $user->getId() . '/' . $to
 
 
     #[Route('/inscription/{id}/{token}', name: 'registerActivation')]
-    public function activation(Request $request, User $user, $token): Response
+    public function activation(User $user, string $token): Response
     {
         if (!$user->isActive()) {
 

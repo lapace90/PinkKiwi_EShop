@@ -6,7 +6,6 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,8 +21,7 @@ class RegisterType extends AbstractType
             ->add('email', EmailType::class, ['required' => false])
             // ->add('roles')
             ->add('password', PasswordType::class, ['label' => false, 'attr' => ['placeholder' => 'Enter your Password']])
-            ->add('confirmPassword', PasswordType::class, ['label' => false, 'attr' => ['placeholder' => 'Confirm your Password']])
-            ->add('submit', SubmitType::class, ['label' => 'Sign In', 'attr' => ['class' => 'btn btn-success col-8 d-block mx-auto']]);
+            ->add('confirmPassword', PasswordType::class, ['label' => false, 'attr' => ['placeholder' => 'Confirm your Password']]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
