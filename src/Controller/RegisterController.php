@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\RegisterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,7 +31,6 @@ class RegisterController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // hash the password (based on the security.yaml config for the $user class)
             $hashedPassword = $this->passwordHasher->hashPassword(
                 $user,
                 $user->getPassword()
@@ -60,37 +60,22 @@ class RegisterController extends AbstractController
     {
         if (!$user->isActive()) {
 
-            $verifToken = sha1($user->getEmail() . $user->getPassword());
+            $verifToken = hash_hmac('sha256', $user->getEmail() . $user->getId(), $this->getParameter('kernel.secret'));
 
-            if ($token == $verifToken) {
+            if (hash_equals($verifToken, $token)) {
 
                 $user->setActive(true);
-
                 $this->manager->flush();
 
-                $this->addFlash(
-                    'success',
-                    'Account successfully activated'
-                );
-
-                return $this->redirectToRoute('account');
-            } else {
-
-                $this->addFlash(
-                    'danger',
-                    'Incorrect link'
-                );
-
+                $this->addFlash('success', 'Account successfully activated');
                 return $this->redirectToRoute('account');
             }
-        } else {
 
-            $this->addFlash(
-                'success',
-                 'The account ' . $user->getEmail() . ' is already activated'
-            );
-
+            $this->addFlash('danger', 'Incorrect link');
             return $this->redirectToRoute('account');
         }
+
+        $this->addFlash('success', 'The account ' . $user->getEmail() . ' is already activated');
+        return $this->redirectToRoute('account');
     }
 }

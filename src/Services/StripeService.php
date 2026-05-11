@@ -19,8 +19,6 @@ class StripeService extends AbstractController
         $stripeSecretKey = $this->getParameter('STRIPE_KEY');
         Stripe::setApiKey($stripeSecretKey);
 
-        dump('je suis là');
-
         return Session::create([
             'line_items' => $stripeProducts,
             'mode' => 'payment',

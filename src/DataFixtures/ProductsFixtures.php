@@ -31,7 +31,7 @@ class ProductsFixtures extends Fixture
                     ->setDescription($faker->paragraph(3))
                     ->setSubtitle($faker->words(3, true))
                     ->setPrice($faker->numberBetween(1000, 20000))
-                    ->setPicture('https://source.unsplash.com/400x400/?product,shopping,style&sig=' . $imageId)
+                    ->setPicture('https://picsum.photos/seed/' . $imageId . '/400/400')
                     ->setCategory($category);
                 
                 $manager->persist($product);
